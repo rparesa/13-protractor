@@ -1,0 +1,16 @@
+<h2>{{movie.title}} <small>({{movie.released | date:'yyyy'}})</small></h2>
+<p class="lead"><small>{{movie.rating}} | {{movie.released | date:'MMMM, dd yyyy'}} | {{movie.genre}}</small></p>
+
+<div class="row">
+	<div class="col-sm-8">
+		<dl>
+			<dt>Tickets sold</dt>
+			<dd>{{movie.tickets}}</dd>
+			<dt>Total Box Office Earnings</dt>
+			<dd>{{movie.gross | currency:'$':0}}</dd>
+		</dl>
+	</div>
+
+	<div class="col-sm-4">
+	</div>
+</div>
