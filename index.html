@@ -5,10 +5,12 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Movie Data</title>
+  <title>The Movies!</title>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
   <link rel="stylesheet" href="css/main.css">
+
+  <link rel="icon" href="img/movie-icon.png">
 
 	<!-- load Angular -->
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.js"></script>	<!-- load our script -->
@@ -16,7 +18,7 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.3.1/angular-ui-router.js"></script>
 	<script src="js/movies.js"></script>
 </head>
-<body ng-controller="MoviesCtrl">
+<body>
 
 	<nav role="navigation">
 		<ul class="container list-unstyled list-inline">
@@ -25,11 +27,6 @@
 			<li><a ui-sref="about">About</a></li>
 		</ul>
 	</nav>
-
-	<header class="container" role="banner">
-		<h1>The Year in Movies: 2015</h1>
-		<p class="lead">Movies released during 2015</p>
-	</header>
 
 	<!--main was here-->
 	<div ui-view></div>

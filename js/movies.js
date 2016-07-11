@@ -2,90 +2,104 @@
 
 var myApp = angular.module('MoviesApp', ['ngSanitize', 'ui.router']);
 
-myApp.config(['$stateProvider', '$urlRouterProvider',function($stateProvider, $urlRouterProvider){
-
+//configure routes
+myApp.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $urlRouterProvider) {
 	$stateProvider
-		.state('home',{
+		.state('home', {
 			url: '/home',
-			templateUrl: 'partials/home.html'
+			templateUrl: 'partials/home.html',
+			controller: 'MoviesCtrl'
 		})
-		.state('about',{
+		.state('about', {
 			url: '/about',
 			templateUrl: 'partials/about.html'
 		})
-		.state('blog',{
+		.state('blog', {
 			url: '/musings',
 			templateUrl: 'partials/blog.html',
 			controller: 'BlogCtrl'
 		})
-		.state('detail',{
+		.state('detail', {
 			url: '/details/:movie',
 			templateUrl: 'partials/movie-detail.html',
 			controller: 'DetailsCtrl'
 		})
-
 		$urlRouterProvider.otherwise('/home');
-
-
 }]);
 
 //For movie list
-myApp.controller('MoviesCtrl', ['$scope', '$http', function($scope, $http){
+myApp.controller('MoviesCtrl', ['$scope', '$http', function ($scope, $http) {
   $scope.ordering = '-gross'; //default ordering
-  
-  $http.get('data/movies-2015.json').then(function(response){
-      var data = response.data;
-      $scope.movies = data;
+
+  $http.get('data/movies-2015.json').then(function (response) {
+		var data = response.data;
+		$scope.movies = data;
   });
 }]);
 
 //For movie blog
-myApp.controller('BlogCtrl', ['$scope', '$http', '$filter', function($scope, $http, $filter) {
+myApp.controller('BlogCtrl', ['$scope', '$http', '$filter', function ($scope, $http, $filter) {
 
-	$http.get('data/blog.json').then(function(response) {
- 		$scope.posts = response.data;
+	$http.get('data/blog.json').then(function (response) {
+		$scope.posts = response.data;
  	});
 
-	$scope.postToBlog = function(){
+	$scope.postToBlog = function () {
 		var title = $scope.newPost.title; //get values from form
-	  var date = $filter('date')(Date.now(), 'yyyy-MM-ddTHH:mm:ss'); //format current time
+		var date = $filter('date')(Date.now(), 'yyyy-MM-ddTHH:mm:ss'); //format current time
 		var body = $scope.newPost.body;
 
     //object that is the new post
-		var theNewPost = {'title':title, 'date':date, 'content':body}; 
+		var theNewPost = { 'title': title, 'date': date, 'content': body };
 
 		//TODO: Add new post to the list of posts!
 		$scope.posts.push(theNewPost);
 	};
 
-}])
+}]);
 
-myApp.controller('DetailsCtrl', ['$scope', '$stateParams', '$filter', '$http', function($scope, $stateParams, $filter, $http){
-	console.log($stateParams.movie);
+//For movie details
+myApp.controller('DetailsCtrl', ['$scope', '$stateParams', '$filter', '$http', function ($scope, $stateParams, $filter, $http) {
+	//console.log($stateParams.movie);
 
-  $http.get('data/movies-2015.json').then(function(response){
-      var movies = response.data;
+  $http.get('data/movies-2015.json').then(function (response) {
+		var movies = response.data;
 
-			var targetObj = $filter('filter')(movies, { //filter the array
-      	id: $stateParams.movie //for items whose id property is targetId
-   		}, true)[0]; //save the 0th result
+		var targetObj = $filter('filter')(movies, { //filter the array
+			id: $stateParams.movie //for items whose id property is targetId
+		}, true)[0]; //save the 0th result
 
-			$scope.movie = targetObj;
+		$scope.movie = targetObj;
 
-  });
+		var omdbUri = 'http://www.omdbapi.com/?t=' + $scope.movie.title;
+		return $http.get(omdbUri); //launch request and return promise for later
+  })
+	.then(function (response) { //on response from OMDB
+		//save some omdb specific fields
+		$scope.movie.Title = response.data.Title;
+		$scope.movie.Year = response.data.Year;
+		$scope.movie.imdbID = response.data.imdbID;
+		$scope.movie.Poster = response.data.Poster;
+		$scope.movie.Plot = response.data.Plot;
+	});
+}]);
 
 
+//For to-watch list
+myApp.controller('WatchListCtrl', ['$scope', '$http', function ($scope, $http) {
 
-	//find the movie with the `$stateParmas.movie` id
-	//show that one
+	//"constants" for priority setting
+	$scope.priorities = ['Very High', 'High', 'Medium', 'Low', 'Very Low'];
+	$scope.priority = 'Medium'; //default
 
-	// $scope.movie = { 
-  //    title: "An Example Movie",
-  //    released: "7/6/16",
-  //    distributor: "INFO 343",
-  //    genre: "Educational",
-  //    rating: "PG",
-  //    gross: 1000000,
-  //    tickets: 30
-	// };
-}])
+	//run a search query
+	$scope.searchFilms = function () {
+
+		var omdbUri = 'http://www.omdbapi.com/?s=' + $scope.searchQuery + '&type=movie';
+		$http.get(omdbUri).then(function (response) {
+			console.log(response.data.Search); //response is inside the Search field
+
+		});
+	};
+}]);
+

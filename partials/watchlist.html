@@ -1,0 +1,25 @@
+<div class="to-watch">
+
+<section class="movie-search-form">
+  <h3>Find a Movie to Watch</h3>
+  <form name="searchForm" role="form" novalidate>
+    <div class="form-group form-inline">
+      <input type="text" name="title" id="title" class="form-control movie-search" autofocus>
+      <button type="submit" class="btn btn-primary" ng-click="searchFilms()"><i class="fa fa-search"></i></button>
+    </div>
+    <div class="form-group form-inline">
+      <label for="priority">Priority:</label>
+      <select name="priority" id="priority" class="form-control" ng-model="priority" ng-options="item for item in priorities">
+      </select>
+    </div>
+  </form>
+</section> <!-- end form section -->
+
+<section class="search-results">
+</section>
+
+<section class="watch-list">
+  <h1>My Movies To Watch</h1>
+</section>
+
+</div> <!-- towatch -->

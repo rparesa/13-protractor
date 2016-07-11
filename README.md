@@ -1,3 +1,3 @@
-# Angular Routing Demo
+# Yet Another Angular Demo
 
-Repo for demonstrating Angular Routing using ui.router.
+Repo for demonstrating UI-Bootstrap, services, localStorage, and maybe directives.
