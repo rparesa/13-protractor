@@ -1,6 +1,6 @@
 'use strict';
 
-var myApp = angular.module('MoviesApp', ['ngSanitize', 'ui.router']);
+var myApp = angular.module('MoviesApp', ['ngSanitize', 'ui.router', 'ui.bootstrap']);
 
 //configure routes
 myApp.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $urlRouterProvider) {
@@ -24,6 +24,12 @@ myApp.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, 
 			templateUrl: 'partials/movie-detail.html',
 			controller: 'DetailsCtrl'
 		})
+		.state('watchlist', {
+			url: '/watchlist',
+			templateUrl: 'partials/watchlist.html',
+			controller: 'WatchListCtrl'
+		})
+
 		$urlRouterProvider.otherwise('/home');
 }]);
 
@@ -59,7 +65,7 @@ myApp.controller('BlogCtrl', ['$scope', '$http', '$filter', function ($scope, $h
 }]);
 
 //For movie details
-myApp.controller('DetailsCtrl', ['$scope', '$stateParams', '$filter', '$http', function ($scope, $stateParams, $filter, $http) {
+myApp.controller('DetailsCtrl', ['$scope', '$stateParams', '$filter', '$http', 'WatchListService', function ($scope, $stateParams, $filter, $http, WatchListService) {
 	//console.log($stateParams.movie);
 
   $http.get('data/movies-2015.json').then(function (response) {
@@ -82,24 +88,98 @@ myApp.controller('DetailsCtrl', ['$scope', '$stateParams', '$filter', '$http', f
 		$scope.movie.Poster = response.data.Poster;
 		$scope.movie.Plot = response.data.Plot;
 	});
+
+  $scope.saveMovie = function(movie){
+	 WatchListService.addMovie(movie);
+  };
+
 }]);
 
 
 //For to-watch list
-myApp.controller('WatchListCtrl', ['$scope', '$http', function ($scope, $http) {
+myApp.controller('WatchListCtrl', ['$scope', '$http', '$uibModal', 'WatchListService', function ($scope, $http, $uibModal, WatchListService) {
 
 	//"constants" for priority setting
 	$scope.priorities = ['Very High', 'High', 'Medium', 'Low', 'Very Low'];
 	$scope.priority = 'Medium'; //default
 
+	$scope.watchlist = WatchListService.watchlist;
+
 	//run a search query
 	$scope.searchFilms = function () {
 
 		var omdbUri = 'http://www.omdbapi.com/?s=' + $scope.searchQuery + '&type=movie';
+		console.log(omdbUri);
 		$http.get(omdbUri).then(function (response) {
 			console.log(response.data.Search); //response is inside the Search field
+			$scope.searchResults = response.data.Search;
 
+			//show modal!
+			var modalInstance = $uibModal.open({
+				templateUrl: 'partials/select-movie-modal.html', //partial to show
+				controller: 'ModalCtrl', //controller for the modal
+				scope: $scope //pass in all our scope variables!
+			});
+
+			//When the modal closes (with a result)
+			modalInstance.result.then(function(selectedItem) {
+				//put item on the scope!
+				$scope.movie = selectedItem;
+				console.log("Now selected: ", $scope.movie);
+			});
 		});
-	};
+	}; //end of searchFilms
+
+	$scope.saveFilm = function(movie, priority){
+		WatchListService.addMovie(movie);
+		$scope.movie = undefined; //clear the selected movie
+	}
+
 }]);
+
+myApp.controller('ModalCtrl', ['$scope', '$uibModalInstance', function($scope, $uibModalInstance) {
+
+	$scope.select = function(movie){
+		$scope.selectedMovie = movie;
+		//console.log('You selected', movie);
+	}
+
+	$scope.ok = function() {
+		$uibModalInstance.close($scope.selectedMovie);
+	};
+	
+	$scope.cancel = function() {
+		$uibModalInstance.dismiss('cancel');
+	};
+
+}]);
+
+
+myApp.factory('WatchListService',function() {
+	var service = {};
+
+	if(localStorage.watchlist !== undefined){
+		service.watchlist = JSON.parse(localStorage.watchlist);
+		//console.log(service.watchlist);
+	}
+	else {
+		service.watchlist = [];
+	}
+
+	service.message = "Hello, I'm a service";
+	service.addMovie = function(movie){
+		service.watchlist.push(movie);
+		localStorage.watchlist = JSON.stringify(service.watchlist);
+		//console.log("saved ",localStorage.watchlist)
+	};
+
+	return service;
+});
+
+
+
+
+
+
+
 
