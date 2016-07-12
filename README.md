@@ -1,3 +1,3 @@
-# Yet Another Angular Demo
+# Protractor Demo
 
-Repo for demonstrating UI-Bootstrap, services, localStorage, and maybe directives.
+Repo for demonstrating Protractor.

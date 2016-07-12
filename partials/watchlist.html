@@ -1,3 +1,7 @@
+<header class="container">
+  <h1>Movies to Watch</h1>
+</header>
+
 <main class="container">
 <div class="to-watch">
 
@@ -5,8 +9,8 @@
   <h3>Find a Movie to Watch</h3>
   <form name="searchForm" role="form" novalidate>
     <div class="form-group form-inline">
-      <input type="text" name="title" id="title" class="form-control movie-search" autofocus ng-model="searchQuery">
-      <button type="submit" class="btn btn-primary" ng-click="searchFilms()"><i class="fa fa-search" aria-label="search"></i></button>
+      <input type="text" name="title" id="title" class="form-control movie-search" autofocus ng-model="searchQuery" required>
+      <button type="submit" class="btn btn-primary" id="searchButton" ng-disabled="searchForm.$invalid" ng-click="searchFilms()"><i class="fa fa-search" aria-label="search"></i></button>
     </div>
   </form>
 </section> <!-- end form section -->
@@ -26,13 +30,19 @@
 </section>
 
 <section class="watch-list">
-  <h1>My Movies To Watch</h1>
-  <ul>
-    <li ng-repeat="movie in watchlist">
-      <img class="poster" ng-src="{{movie.Poster !== 'N/A' ? movie.Poster : 'img/nofilm.png'}}">
-        {{movie.Title}} ({{movie.Year}})
-    </li>
-  </ul>
+  <h2>My Movies To Watch</h2>
+  <table class="table table-condensed to-watch-table" ng-if="watchlist.length > 0">
+    <tr>
+      <th></th>
+      <th>Title</th>
+      <th>Priority</th>
+    </tr>
+    <tr ng-repeat="movie in watchlist | orderBy:'priority'">
+      <td><img class="poster" ng-src="{{movie.Poster !== 'N/A' ? movie.Poster : 'img/nofilm.png'}}"></td>
+      <td><a ng-href="http://www.imdb.com/title/{{movie.imdbID}}" target="_blank">{{movie.Title}} ({{movie.Year}})</a></td>
+      <td>{{priorities[movie.priority]}}</td>
+    </tr>
+  </table>  </ul>
 
 </section>
 

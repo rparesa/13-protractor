@@ -90,6 +90,7 @@ myApp.controller('DetailsCtrl', ['$scope', '$stateParams', '$filter', '$http', '
 	});
 
   $scope.saveMovie = function(movie){
+	 movie.priority = 2; //default
 	 WatchListService.addMovie(movie);
   };
 
@@ -131,9 +132,10 @@ myApp.controller('WatchListCtrl', ['$scope', '$http', '$uibModal', 'WatchListSer
 	}; //end of searchFilms
 
 	$scope.saveFilm = function(movie, priority){
+		movie.priority = $scope.priorities.indexOf(priority);
 		WatchListService.addMovie(movie);
 		$scope.movie = undefined; //clear the selected movie
-	}
+	};
 
 }]);
 
