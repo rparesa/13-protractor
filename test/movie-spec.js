@@ -1,5 +1,20 @@
 'use strict';
 
+describe('Feature name', function() {
+
+   //run this callback before each test
+   beforeEach(function() {
+      //reload the page before each test
+      //so that testing "clean"
+      browser.get('http://localhost:8000');
+   });
+
+   it('should do the first thing', function() { });
+   
+   it('should do the second thing', function() { });
+});
+
+
 describe('Watchlist Metadata', function(){
 
 it('should have the correct title', function(){
@@ -70,12 +85,15 @@ describe('search form', function(){
     it('should show the modal on search', function(){
         var input = element(by.model('searchQuery'));
         var button = element(by.css("#searchButton"));
+        var modal = element(by.css('.modal-body'));
 
         input.sendKeys('star wars');
 
         button.click();
 
         browser.pause();
+
+        expect(modal.isVisible()).toEqual(true);
 
     });
 
