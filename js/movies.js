@@ -15,7 +15,7 @@ myApp.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, 
 			templateUrl: 'partials/about.html'
 		})
 		.state('blog', {
-			url: '/musings',
+			url: '/blogs',
 			templateUrl: 'partials/blog.html',
 			controller: 'BlogCtrl'
 		})
